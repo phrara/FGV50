@@ -61,7 +61,7 @@ func RunCli(args *flag.Args) {
 			count++
 			if count >= total * 3 {
 				// TODO: Judge The Result 
-
+				
 				// close result channel
 				processor.CloseResC()
 			}
