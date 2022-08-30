@@ -1,9 +1,9 @@
 package scanner
 
 import (
-	"csl/scanner/connection"
-	"csl/tools/addr"
-	"csl/tools/workerpool"
+	"fgv50/scanner/connection"
+	"fgv50/tools/addr"
+	"fgv50/tools/workerpool"
 
 	"github.com/zhzyker/dismap/pkg/logger"
 )

@@ -1,5 +1,5 @@
-# CheeseSnowleopard
-> For a science geek, isn't it cool?
+# FGV50
+> jy, v50; hy, v50!  
 
 ## Architecture
 ![archi](assets/arch.png)

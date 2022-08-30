@@ -1,4 +1,4 @@
-module csl
+module fgv50
 
 go 1.18
 

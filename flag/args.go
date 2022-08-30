@@ -1,8 +1,8 @@
 package flag
 
 import (
-	"csl/err"
-	"csl/tools/addr"
+	"fgv50/err"
+	"fgv50/tools/addr"
 	"fmt"
 	"net/url"
 	"strconv"

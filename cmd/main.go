@@ -1,8 +1,8 @@
 package main
 
 import (
-	"csl/flag"
-	"csl/scanner"
+	"fgv50/flag"
+	"fgv50/scanner"
 	"fmt"
 )
 

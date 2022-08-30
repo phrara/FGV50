@@ -1,9 +1,9 @@
 package scanner
 
 import (
-	"csl/flag"
-	"csl/scanner/connection"
-	"csl/tools/workerpool"
+	"fgv50/flag"
+	"fgv50/scanner/connection"
+	"fgv50/tools/workerpool"
 	"fmt"
 	"sync"
 )

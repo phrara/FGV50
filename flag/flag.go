@@ -1,7 +1,7 @@
 package flag
 
 import (
-	"csl/err"
+	"fgv50/err"
 	"flag"
 	"fmt"
 )
