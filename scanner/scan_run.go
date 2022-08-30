@@ -57,14 +57,14 @@ func RunCli(args *flag.Args) {
 				scanTask := NewScanTask(h, p, "", args.TTL)
 				wp.AppendTask(scanTask, 0)
 				wp.AppendTask(scanTask, 1)
-				wp.AppendTask(scanTask, 2)
+				//wp.AppendTask(scanTask, 2)
 			}
 		}
 		for r := range processor.GetResults() {
 			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
 			fmt.Println(string(res.Buf))
 			count++
-			if count >= total * 3 {
+			if count >= total * 2 {
 				// TODO: Judge The Result 
 				
 				// close result channel
