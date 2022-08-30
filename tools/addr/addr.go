@@ -19,7 +19,7 @@ func Split(addr string) (string, int) {
 
 func AddrCheck(addr string) bool {
 	ip, port := Split(addr)
-	compile, _ := regexp.Compile(`((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)`)
+	compile, _ := regexp.Compile(`((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)`)
 	if b := compile.MatchString(ip); b {	
 		if port < 0 || port > 65535 {
 			return false

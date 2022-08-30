@@ -74,6 +74,9 @@ func (a *Args) PrintAllAddrs() {
 
 func ParseNetworkSegment(ns string) ([]string, error) {
 	h := make([]string, 0, 15)
+	if ns == "" {
+		return h, nil
+	}
 	if strings.Contains(ns, "~") && strings.Contains(ns, "+") {
 		return nil, err.ErrIllFormedNS
 	}

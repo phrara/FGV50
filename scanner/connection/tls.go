@@ -7,17 +7,16 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/zhzyker/dismap/pkg/logger"
 )
 
 func TlsProtocol(host string, port int, timeout int) ([]byte, error) {
 	conn, err := ConnProxyTls(host, port, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return nil, err
 	}
 	msg := "GET /test HTTP/1.1\r\n\r\n"
 	_, err = conn.Write([]byte(msg))
-	if logger.DebugError(err) {
+	if err != nil{
 		return nil, err
 	}
 	_ = conn.SetDeadline(time.Now().Add(time.Duration(2) * time.Second))
@@ -32,12 +31,12 @@ func TlsProtocol(host string, port int, timeout int) ([]byte, error) {
 
 	}
 	conn, err = ConnProxyTcp(host, port, timeout)
-	if logger.DebugError(err) {
+	if err != nil {
 		return nil, err
 	}
 	msg = "GET /test HTTP/1.1\r\n\r\n"
 	_, err = conn.Write([]byte(msg))
-	if logger.DebugError(err) {
+	if err != nil {
 		return nil, err
 	}
 	_ = conn.SetDeadline(time.Now().Add(time.Duration(timeout) * time.Second))
@@ -59,11 +58,11 @@ func ConnProxyTls(host string, port int, timeout int) (net.Conn, error) {
 		"tcp",
 		target,
 		&tls.Config{InsecureSkipVerify: true})
-	if logger.DebugError(err) {
+	if err != nil {
 		return nil, err
 	}
 	err = conn.SetDeadline(time.Now().Add(time.Duration(timeout) * time.Second))
-	if logger.DebugError(err) {
+	if err != nil {
 		if conn != nil {
 			_ = conn.Close()
 		}
