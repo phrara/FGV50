@@ -37,7 +37,7 @@ func New(maxQueNum, avgWorker, maxQueLen int, tasker Tasker, mod Strategy) *Work
 
 func (w *WorkerPool) work(qid int) {
 	for task := range w.taskQueue[qid] {
-		err := w.tasker.Process(task)
+		err := w.tasker.Process(task, qid)
 		if len(err) != 0 {
 			w.tasker.Handle(err)
 		}

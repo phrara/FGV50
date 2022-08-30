@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"fgv50/tools"
 	"fgv50/flag"
 	"fgv50/scanner/connection"
 	"fgv50/tools/workerpool"
@@ -14,7 +15,7 @@ var (
 
 func initWorkPool() (*ScanTaskProcessor, *workerpool.WorkerPool) {
 	scanTaskProc := NewScanTaskProcessor(DefaultResQueLen)
-	wp := workerpool.New(4, 2, 20, scanTaskProc, workerpool.RR)
+	wp := workerpool.New(3, 2, 20, scanTaskProc, workerpool.SRC)
 	wp.Start()
 	return scanTaskProc, wp
 }
@@ -41,6 +42,7 @@ func PingScreen(hosts []string, ttl int) (aliveHosts []string) {
 
 func RunCli(args *flag.Args) {
 	if args.Url == nil {
+
 		// initiate the workpool
 		processor, wp := initWorkPool()
 		aliveHosts := PingScreen(args.Hosts, args.TTL)
@@ -54,10 +56,13 @@ func RunCli(args *flag.Args) {
 			for _, p := range args.Ports {
 				scanTask := NewScanTask(h, p, "", args.TTL)
 				wp.AppendTask(scanTask, 0)
+				wp.AppendTask(scanTask, 1)
+				wp.AppendTask(scanTask, 2)
 			}
 		}
 		for r := range processor.GetResults() {
-			fmt.Println(string(r.Buf))
+			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
+			fmt.Println(string(res.Buf))
 			count++
 			if count >= total * 3 {
 				// TODO: Judge The Result 

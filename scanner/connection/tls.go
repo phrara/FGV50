@@ -53,11 +53,7 @@ func ConnProxyTls(host string, port int, timeout int) (net.Conn, error) {
 	// scheme, address, proxyUri, err := parse.ProxyParse()
 	// TLS does not support proxy function temporarily
 	// 2022-02-23 by zhzyker
-	conn, err := tls.DialWithDialer(
-		&net.Dialer{Timeout: time.Duration(timeout) * time.Second},
-		"tcp",
-		target,
-		&tls.Config{InsecureSkipVerify: true})
+	conn, err := tls.DialWithDialer(&net.Dialer{Timeout: time.Duration(timeout) * time.Second}, "tcp", target, &tls.Config{InsecureSkipVerify: true})
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 package workerpool
 
 type Tasker interface {
-	Process(task any) []error
+	Process(task any, qid int) []error
 	Handle(err []error)
 }
 
@@ -9,7 +9,7 @@ type Task struct {
 	
 }
 
-func (t *Task) Process(task any) []error {
+func (t *Task) Process(task any, qid int) []error {
 	panic("implement me")
 }
 

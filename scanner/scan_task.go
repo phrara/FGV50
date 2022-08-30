@@ -4,11 +4,15 @@ import (
 	"fgv50/scanner/connection"
 	"fgv50/tools/addr"
 	"fgv50/tools/workerpool"
+	"fmt"
+	"sync"
 
-	"github.com/zhzyker/dismap/pkg/logger"
 )
 
+func init() {
 
+	
+}
 type ScanTask struct {
 	Host string
 	Port int
@@ -34,6 +38,11 @@ type Result struct {
 	*ScanTask
 	Buf []byte
 	Type string
+
+	IdBool   bool
+	IdString  string
+	BString  string
+
 }
 
 func NewResult(st *ScanTask, buf []byte, typ string) Result {
@@ -60,31 +69,49 @@ func NewScanTaskProcessor(resQueLen int) *ScanTaskProcessor {
 	}
 }
 
-func (s *ScanTaskProcessor) Process(task any) []error {
+var (
+	tcpM sync.Mutex
+	tlsM sync.Mutex
+	udpM sync.Mutex
+)
+func (s *ScanTaskProcessor) Process(task any, qid int) []error {
 	t := task.(*ScanTask)
 	errs := make([]error, 0, 3)
+	
+	
+	switch qid {
+	case 0:
+		tcpM.Lock()
+		fmt.Printf("start scanning tcp/%s:%d\n", t.Host, t.Port)
+		b2, err2 := connection.TcpProtocol(t.Host, t.Port, t.TTL)
+		errs = append(errs, err2)
+		s.PutResult(NewResult(t, b2, "tcp"))
+		tcpM.Unlock()
+	case 1:
+		tlsM.Lock()
+		fmt.Printf("start scanning tls/%s:%d\n", t.Host, t.Port)
 
-	b1, err1 := connection.TlsProtocol(t.Host, t.Port, t.TTL)
-	errs = append(errs, err1)
-	s.PutResult(NewResult(t, b1, "tls"))
+		b1, err1 := connection.TlsProtocol(t.Host, t.Port, t.TTL)
+		errs = append(errs, err1)
+		s.PutResult(NewResult(t, b1, "tls"))
+		tlsM.Unlock()
+	case 2:
+		udpM.Lock()
+		
+		fmt.Printf("start scanning udp/%s:%d\n", t.Host, t.Port)
 
-	b2, err2 := connection.TcpProtocol(t.Host, t.Port, t.TTL)
-	errs = append(errs, err2)
-	s.PutResult(NewResult(t, b2, "tcp"))
-
-	b3, err3 := connection.UdpProtocol(t.Host, t.Port, t.TTL)
-	errs = append(errs, err3)
-	s.PutResult(NewResult(t, b3, "udp"))
-
+		b3, err3 := connection.UdpProtocol(t.Host, t.Port, t.TTL)
+		errs = append(errs, err3)
+		s.PutResult(NewResult(t, b3, "udp"))
+		udpM.Unlock()
+	default:
+	}
+	
 	return errs
+	
 }
 
 func (s *ScanTaskProcessor) Handle(errs []error) {
-	for _, e := range errs {
-		if e != nil {
-			logger.DebugError(e)
-		}
-	}
 }
 
 
