@@ -18,6 +18,8 @@ WITH FLAG:
 	-p 3306 (default -1)
 -u string
 	-u http://123.123.123.123:80
+-t int
+	-t 3 (default 5)
 WITHOUT FLAG:
 	history
 		View historical scan records
@@ -40,11 +42,13 @@ func FlagParse() (*Args, bool) {
 	var hisID int
 	var ip string
 	var port int
+	var TTL int
 	flag.StringVar(&networkSegment, "ns", "", "-ns 123.123.123.1~10 or -ns 123.123.123.1+9")
 	flag.StringVar(&url, "u", "", "-u http://123.123.123.123:80")
 	flag.IntVar(&hisID, "H", -1, "-H 123")
 	flag.StringVar(&ip, "i", "", "-i 123.123.123.123")
 	flag.IntVar(&port, "p", -1, "-p 3306")
+	flag.IntVar(&TTL, "t", 5, "-t 3")
 	flag.Parse() 
 	
 	if flag.NFlag() == 0 {
@@ -56,7 +60,7 @@ func FlagParse() (*Args, bool) {
 			fmt.Println(err.ErrArgsConflict)
 			return nil, false
 		}
-		if args, err := NewArgs(url, networkSegment, ip, port); err == nil {
+		if args, err := NewArgs(url, networkSegment, ip, port, TTL); err == nil {
 			return args, false
 		} else {
 			fmt.Println(err)

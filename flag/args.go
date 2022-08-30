@@ -2,6 +2,7 @@ package flag
 
 import (
 	"csl/err"
+	"csl/tools/addr"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -19,9 +20,10 @@ type Args struct {
 	Url   *url.URL `json:"url"`
 	Hosts []string `json:"hosts"`
 	Ports []int    `json:"ports"`
+	TTL int `json:"ttl"`
 }
 
-func NewArgs(u, ns, ip string, port int) (*Args, error) {
+func NewArgs(u, ns, ip string, port int, ttl int) (*Args, error) {
 	a := new(Args)
 	var ports []int
 	if u != "" {
@@ -30,24 +32,34 @@ func NewArgs(u, ns, ip string, port int) (*Args, error) {
 			return nil, err
 		}
 		a.Url = u2
+		a.TTL = ttl
 		return a, nil
 	} else {
-		hosts, err := ParseNetworkSegment(ns)
-		if err != nil {
-			return nil, err
+		hosts, err1 := ParseNetworkSegment(ns)
+		if err1 != nil {
+			return nil, err1
 		}
 
 		if ip != "" {
-			hosts = append(hosts, ip)
+			if b := addr.AddrCheck(addr.Conbine(ip, 0)); b {
+				hosts = append(hosts, ip)
+			} else {
+				return nil, err.ErrIllFormedIP
+			}
 		}
 		if port != -1 {
-			ports = make([]int, 0, 1)
-			ports = append(ports, port)
+			if port >= 0 || port <= 65535 {
+				ports = make([]int, 0, 1)
+				ports = append(ports, port)
+			} else {
+				return nil, err.ErrPortOutRange
+			}
 		} else {
 			ports = DefaultPorts
 		}
 		a.Hosts = hosts
 		a.Ports = ports
+		a.TTL = ttl
 		return a, nil
 	}
 }
@@ -70,6 +82,9 @@ func ParseNetworkSegment(ns string) ([]string, error) {
 		if len(s) != 2 {
 			return nil, err.ErrIllFormedNS
 		} else {
+			if b := addr.AddrCheck(addr.Conbine(s[0], 0)); !b {
+				return nil, err.ErrIllFormedIP
+			}
 			ipSlice := strings.Split(s[0], ".")
 			sti, er := strconv.ParseInt(ipSlice[3], 10, 64)
 			if er != nil {
@@ -78,6 +93,9 @@ func ParseNetworkSegment(ns string) ([]string, error) {
 			edi, er := strconv.ParseInt(s[1], 10, 64)
 			if er != nil {
 				return nil, err.ErrIllFormedNS
+			}
+			if edi > 65535 {
+				return nil, err.ErrPortOutRange
 			}
 			for i := sti; i <= edi; i++ {
 				seg4 := strconv.FormatInt(i, 10)
@@ -101,6 +119,9 @@ func ParseNetworkSegment(ns string) ([]string, error) {
 				return nil, err.ErrIllFormedNS
 			}
 			edi := sti + inc
+			if edi > 65535 {
+				return nil, err.ErrPortOutRange
+			}
 			for i := sti; i <= edi; i++ {
 				seg4 := strconv.FormatInt(i, 10)
 				ip := ip(append(ipSlice[:3], seg4)...)

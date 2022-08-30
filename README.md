@@ -2,6 +2,6 @@
 > For a science geek, isn't it cool?
 
 ## Architecture
-![archi](assets/archi.png)
+![archi](assets/arch.png)
 
 
