@@ -97,3 +97,4 @@ func (w *WebScanProcessor) GetResults() chan *tools.Result {
 		return w.resC
 	}
 }
+

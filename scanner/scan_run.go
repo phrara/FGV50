@@ -1,9 +1,10 @@
 package scanner
 
 import (
-	"fgv50/tools"
 	"fgv50/flag"
 	"fgv50/scanner/connection"
+	"fgv50/scanner/jg"
+	"fgv50/tools"
 	"fgv50/tools/workerpool"
 	"fmt"
 	"sync"
@@ -51,7 +52,9 @@ func RunCli(args *flag.Args) {
 		fmt.Println("total of targets are", total)
 		// initiate the workpool
 		processor, wp := initWorkPool(total)
-		
+
+
+		resfile := tools.Open()
 		
 		count := 0
 		for _, h := range aliveHosts {
@@ -62,15 +65,50 @@ func RunCli(args *flag.Args) {
 				//wp.AppendTask(scanTask, 2)
 			}
 		}
+		var wg sync.WaitGroup
+		resList := make([]*tools.Result, 0, total * 2)
 		for r := range processor.GetResults() {
 			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
 			fmt.Printf("%s:%d has been scanned\n", res.Host, res.Port)
-			fmt.Println(string(res.Buf))
-			// TODO: Judge The Result
+			res.BString=tools.ByteToStringParse1(res.Buf)
 			
-			
-			
-			
+			wg.Add(1)
+			switch res.Type {
+			case "tcp":
+				go func ()  {
+					defer wg.Done()
+					ok := jg.IdentifyTcp(res)
+					if ok {
+						fmt.Println(res)
+						//tools.Write(res,resfile)
+						resList = append(resList, res)
+					}
+				}()
+				
+			case "tls":
+			 	go func(){
+					defer wg.Done()
+
+					ok := jg.IdentifyTls(res)
+					if ok {
+						fmt.Println(res)
+						// tools.Write(res,resfile)
+						resList = append(resList, res)
+					}
+				}()	
+			case "udp":
+			 	go func(){
+					defer wg.Done()
+
+					ok := jg.IdentifyUdp(res)
+					if ok {
+						fmt.Println(res)
+						// tools.Write(res,resfile)
+						resList = append(resList, res)
+					}
+			 	}()	
+			}
+
 			count++
 
 			if count >= total * 2 {
@@ -78,13 +116,13 @@ func RunCli(args *flag.Args) {
 				processor.CloseResC()
 			}
 		}
-
+		wg.Wait()
 		wp.Shut()
+		tools.Write(resList, resfile, total * 2)
+		tools.Close(resfile)
 	} else {
 		// TODO
 		panic("todo")
 	}
 
 }
-
-
