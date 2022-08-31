@@ -39,6 +39,11 @@
       BString  string `json:"banner"`
     }
   ```
+## Build
 
-
+Use the Makefile to Build the project.
+```shell
+$  make build 
+``` 
+The final executable file will be in the directory: `/out`
 
