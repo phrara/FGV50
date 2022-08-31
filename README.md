@@ -1,7 +1,10 @@
 # FGV50
 > jy, v50; hy, v50!  
 
-## Architecture
+## Modules
+![Modules](assets/modules.png)
+
+## Scanner Architecture
 ![archi](assets/arch.png)
 
 ## Web API
@@ -15,7 +18,7 @@
   ```go
     type Cmd struct {
 	    CmdType string `json:"cmd_type"`
-      
+
 	    Url string `json:"url"`
 	    Ip string `json:"ip"`
 	    Port int `json:"port"`
