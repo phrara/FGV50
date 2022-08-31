@@ -99,7 +99,7 @@ class aliyun:
                 keywordlist.append(content)
                 self.num += 1
             output.append({keyword: keywordlist})
-        with open("./json/ali_cve.json", "w",encoding='gbk') as f:
+        with open("./json/ali_cve.json", "w", encoding='utf-8') as f:
             f.write(json.dumps(output, ensure_ascii=False))
         print(output)
         # 记录最后时间，用来计算查询总时长

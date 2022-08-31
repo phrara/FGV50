@@ -126,7 +126,7 @@ func RunCli(args *flag.Args) {
 		resFilePath, _ = os.Getwd()
 		resFilePath = filepath.Join(resFilePath, "/python/main.py")
 		fmt.Println(resFilePath)
-		py := exec.Command("python", resFilePath)
+		py := exec.Command("python3", resFilePath)
 		err := py.Run()
 		if err != nil {
 			fmt.Println(err)
