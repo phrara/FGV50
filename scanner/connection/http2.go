@@ -20,16 +20,16 @@ import (
 	"github.com/twmb/murmur3"
 )
 
-type resps struct {
-	url        string
-	body       string
-	header     map[string][]string
-	server     string
-	statuscode int
-	length     int
-	title      string
-	jsurl      []string
-	favhash    string
+type Resps struct {
+	Url        string
+	Body       string
+	Header     map[string][]string
+	Server     string
+	Statuscode int
+	Length     int
+	Title      string
+	Jsurl      []string
+	Favhash    string
 }
 
 func rndua() string {
@@ -88,7 +88,7 @@ func getfavicon(httpbody string, turl string) string {
 	return favicohash(faviconpath)
 }
 
-func Httprequest(url string, cycle int, chsize int) (*resps, error) {
+func Httprequest(url string, cycle int, chsize int) (*Resps, error) {
 	transport := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 	client := &http.Client{
 		Timeout:   10 * time.Second,
@@ -136,7 +136,7 @@ func Httprequest(url string, cycle int, chsize int) (*resps, error) {
 		jsurl = []string{""}
 	}
 	favhash := getfavicon(httpbody, url)
-	s := resps{url, httpbody, resp.Header, server, resp.StatusCode, len(httpbody), title, jsurl, favhash}
+	s := Resps{url, httpbody, resp.Header, server, resp.StatusCode, len(httpbody), title, jsurl, favhash}
 	return &s, nil
 }
 

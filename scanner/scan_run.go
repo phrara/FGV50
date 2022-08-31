@@ -13,9 +13,9 @@ var (
 	ism sync.Mutex
 )
 
-func initWorkPool() (*ScanTaskProcessor, *workerpool.WorkerPool) {
-	scanTaskProc := NewScanTaskProcessor(DefaultResQueLen)
-	wp := workerpool.New(3, 2, 20, scanTaskProc, workerpool.SRC)
+func initWorkPool(taskQueLen int) (*ScanTaskProcessor, *workerpool.WorkerPool) {
+	scanTaskProc := NewScanTaskProcessor(taskQueLen * 2 + 1)
+	wp := workerpool.New(3, 2, taskQueLen + 1, scanTaskProc, workerpool.SRC)
 	wp.Start()
 	return scanTaskProc, wp
 }
@@ -42,15 +42,17 @@ func PingScreen(hosts []string, ttl int) (aliveHosts []string) {
 
 func RunCli(args *flag.Args) {
 	if args.Url == nil {
-
-		// initiate the workpool
-		processor, wp := initWorkPool()
+		// Get alive host by PingScreening
 		aliveHosts := PingScreen(args.Hosts, args.TTL)
 		if len(aliveHosts) == 0 {
 			return
 		}
 		total := len(aliveHosts) * len(args.Ports)
 		fmt.Println("total of targets are", total)
+		// initiate the workpool
+		processor, wp := initWorkPool(total)
+		
+		
 		count := 0
 		for _, h := range aliveHosts {
 			for _, p := range args.Ports {
@@ -62,6 +64,7 @@ func RunCli(args *flag.Args) {
 		}
 		for r := range processor.GetResults() {
 			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
+			fmt.Printf("%s:%d has been scanned\n", res.Host, res.Port)
 			fmt.Println(string(res.Buf))
 			// TODO: Judge The Result
 			
@@ -75,6 +78,7 @@ func RunCli(args *flag.Args) {
 				processor.CloseResC()
 			}
 		}
+
 		wp.Shut()
 	} else {
 		// TODO

@@ -4,7 +4,6 @@ import (
 	"fgv50/scanner/connection"
 	"fgv50/tools/addr"
 	"fgv50/tools/workerpool"
-	"fmt"
 	"sync"
 
 )
@@ -54,7 +53,7 @@ func NewResult(st *ScanTask, buf []byte, typ string) Result {
 }
 
 const (
-	DefaultResQueLen = 100
+	DefaultResQueLen = 300
 )
 
 
@@ -82,14 +81,14 @@ func (s *ScanTaskProcessor) Process(task any, qid int) []error {
 	switch qid {
 	case 0:
 		tcpM.Lock()
-		fmt.Printf("start scanning tcp/%s:%d\n", t.Host, t.Port)
+		//fmt.Printf("start scanning tcp/%s:%d\n", t.Host, t.Port)
 		b2, err2 := connection.TcpProtocol(t.Host, t.Port, t.TTL)
 		errs = append(errs, err2)
 		s.PutResult(NewResult(t, b2, "tcp"))
 		tcpM.Unlock()
 	case 1:
 		tlsM.Lock()
-		fmt.Printf("start scanning tls/%s:%d\n", t.Host, t.Port)
+		//fmt.Printf("start scanning tls/%s:%d\n", t.Host, t.Port)
 
 		b1, err1 := connection.TlsProtocol(t.Host, t.Port, t.TTL)
 		errs = append(errs, err1)
@@ -98,7 +97,7 @@ func (s *ScanTaskProcessor) Process(task any, qid int) []error {
 	case 2:
 		udpM.Lock()
 		
-		fmt.Printf("start scanning udp/%s:%d\n", t.Host, t.Port)
+		//fmt.Printf("start scanning udp/%s:%d\n", t.Host, t.Port)
 
 		b3, err3 := connection.UdpProtocol(t.Host, t.Port, t.TTL)
 		errs = append(errs, err3)

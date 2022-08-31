@@ -76,3 +76,8 @@ func (w *WorkerPool) Shut() {
 		close(w.taskQueue[i])
 	}
 }
+
+
+func (w *WorkerPool) ChangeTasker(tasker Tasker)  {
+	w.tasker = tasker
+}

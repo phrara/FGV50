@@ -19,7 +19,7 @@ WITH FLAG:
 -u string
 	-u http://123.123.123.123:80
 -t int
-	-t 3 (default 5)
+	-t 3 (default 3)
 WITHOUT FLAG:
 	history
 		View historical scan records
@@ -48,7 +48,7 @@ func FlagParse() (*Args, bool) {
 	flag.IntVar(&hisID, "H", -1, "-H 123")
 	flag.StringVar(&ip, "i", "", "-i 123.123.123.123")
 	flag.IntVar(&port, "p", -1, "-p 3306")
-	flag.IntVar(&TTL, "t", 5, "-t 3")
+	flag.IntVar(&TTL, "t", 3, "-t 3")
 	flag.Parse() 
 	
 	if flag.NFlag() == 0 {
