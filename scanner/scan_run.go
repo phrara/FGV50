@@ -7,6 +7,9 @@ import (
 	"fgv50/tools"
 	"fgv50/tools/workerpool"
 	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sync"
 )
 
@@ -15,8 +18,8 @@ var (
 )
 
 func initWorkPool(taskQueLen int) (*ScanTaskProcessor, *workerpool.WorkerPool) {
-	scanTaskProc := NewScanTaskProcessor(taskQueLen * 2 + 1)
-	wp := workerpool.New(3, 2, taskQueLen + 1, scanTaskProc, workerpool.SRC)
+	scanTaskProc := NewScanTaskProcessor(taskQueLen*2 + 1)
+	wp := workerpool.New(3, 2, taskQueLen+1, scanTaskProc, workerpool.SRC)
 	wp.Start()
 	return scanTaskProc, wp
 }
@@ -24,13 +27,13 @@ func initWorkPool(taskQueLen int) (*ScanTaskProcessor, *workerpool.WorkerPool) {
 func PingScreen(hosts []string, ttl int) (aliveHosts []string) {
 	aliveHosts = make([]string, 0, 20)
 	var wg sync.WaitGroup
-	for _, v := range hosts {	
+	for _, v := range hosts {
 		h := v
 		wg.Add(1)
-		go func (h string)  {
+		go func(h string) {
 			defer wg.Done()
 			if b := connection.Ping(h, ttl); b {
-				
+
 				ism.Lock()
 				aliveHosts = append(aliveHosts, h)
 				ism.Unlock()
@@ -53,9 +56,8 @@ func RunCli(args *flag.Args) {
 		// initiate the workpool
 		processor, wp := initWorkPool(total)
 
-
 		resfile := tools.Open()
-		
+
 		count := 0
 		for _, h := range aliveHosts {
 			for _, p := range args.Ports {
@@ -66,16 +68,16 @@ func RunCli(args *flag.Args) {
 			}
 		}
 		var wg sync.WaitGroup
-		resList := make([]*tools.Result, 0, total * 2)
+		resList := make([]*tools.Result, 0, total*2)
 		for r := range processor.GetResults() {
 			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
 			fmt.Printf("%s:%d has been scanned\n", res.Host, res.Port)
-			res.BString=tools.ByteToStringParse1(res.Buf)
-			
+			res.BString = tools.ByteToStringParse1(res.Buf)
+
 			wg.Add(1)
 			switch res.Type {
 			case "tcp":
-				go func ()  {
+				go func() {
 					defer wg.Done()
 					ok := jg.IdentifyTcp(res)
 					if ok {
@@ -84,9 +86,9 @@ func RunCli(args *flag.Args) {
 						resList = append(resList, res)
 					}
 				}()
-				
+
 			case "tls":
-			 	go func(){
+				go func() {
 					defer wg.Done()
 
 					ok := jg.IdentifyTls(res)
@@ -95,9 +97,9 @@ func RunCli(args *flag.Args) {
 						// tools.Write(res,resfile)
 						resList = append(resList, res)
 					}
-				}()	
+				}()
 			case "udp":
-			 	go func(){
+				go func() {
 					defer wg.Done()
 
 					ok := jg.IdentifyUdp(res)
@@ -106,20 +108,30 @@ func RunCli(args *flag.Args) {
 						// tools.Write(res,resfile)
 						resList = append(resList, res)
 					}
-			 	}()	
+				}()
 			}
 
 			count++
 
-			if count >= total * 2 {
+			if count >= total*2 {
 				// close result channel
 				processor.CloseResC()
 			}
 		}
 		wg.Wait()
 		wp.Shut()
-		tools.Write(resList, resfile, total * 2)
+		tools.Write(resList, resfile, total*2)
 		tools.Close(resfile)
+		var resFilePath string
+		resFilePath, _ = os.Getwd()
+		resFilePath = filepath.Join(resFilePath, "/python/main.py")
+		fmt.Println(resFilePath)
+		py := exec.Command("python", resFilePath)
+		err := py.Run()
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("run python err")
+		}
 	} else {
 		// TODO
 		panic("todo")
