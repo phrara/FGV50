@@ -63,10 +63,14 @@ func RunCli(args *flag.Args) {
 		for r := range processor.GetResults() {
 			res := tools.NewRes(r.Host, r.Protocol, r.Type, r.IdString, r.BString, r.Port, r.TTL, r.Buf, r.IdBool)
 			fmt.Println(string(res.Buf))
+			// TODO: Judge The Result
+			
+			
+			
+			
 			count++
+
 			if count >= total * 2 {
-				// TODO: Judge The Result 
-				
 				// close result channel
 				processor.CloseResC()
 			}
