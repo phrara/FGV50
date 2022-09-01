@@ -21,3 +21,6 @@ locbms: ./cmd/main.go
 
 bili: ./cmd/main.go
 	go run ./cmd/main.go -u https://www.bilibili.com/
+
+ktz: ./cmd/main.go
+	go run ./cmd/main.go -i 123.56.222.28

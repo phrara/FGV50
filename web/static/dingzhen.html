@@ -321,7 +321,7 @@
               //setRoot(datas.data.res[0].host)
               for (let v of datas.data.res) {
                   addIP(v.host)
-                  addPortInfo(v.host, v.port, v.protocol, v.banner)  
+                  addPortInfo(v.host, v.port, v.protocol, v.idstring + v.banner)  
               }
               for (let v of datas.data.hd) {
                   addIP("MAC:" + v.mac+" 设备:" + v.dev)

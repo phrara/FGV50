@@ -26,7 +26,7 @@ type (
 const (
 	SingleIP = "i"
 	NetworkSegment = "ns"
-	URL = "url"
+	URL = "u"
 )
 
 func CommandExec(c *gin.Context) {
@@ -102,10 +102,9 @@ func CommandExec(c *gin.Context) {
 				args.HistDB = hdb.(*storage.HisDB)
 				kTime := scanner.RunCli(args)
 				// read results and vuls from histDB
-				vRes, vVul, vHD := args.HistDB.GetRecord(kTime)
-
-				resp := formatJson(string(kTime), vRes, vVul, vHD)
-
+				vRes, vVul, _ := args.HistDB.GetRecord(kTime)
+				
+				resp := formatJson(string(kTime), vRes, vVul, []byte(`[]`))
 				c.String(http.StatusOK, resp)
 				return
 			}
