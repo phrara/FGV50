@@ -56,6 +56,10 @@ func FlagParse() (args *Args, web bool, hdb bool) {
 		fmt.Println(err.ErrArgsLack)
 		return nil, false, false
 	}
+	if flag.NFlag() != 0 && flag.NArg() != 0 {
+		fmt.Println(err.ErrArgsConflict)
+		return nil, false, false
+	} 
  	if flag.NArg() == 0 {
 		if (networkSegment != "" && url != "") || (url != "" && ip != "") || (url != "" && port != -1) {
 			fmt.Println(err.ErrArgsConflict)
