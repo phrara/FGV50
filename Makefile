@@ -3,6 +3,9 @@
 build: ./cmd/main.go
 	go build -o ./out/fgv.exe ./cmd/main.go
 
+web: ./cmd/main.go
+	go run ./cmd/main.go webui
+
 locps: ./cmd/main.go
 	go run ./cmd/main.go -i 127.0.0.1
 
