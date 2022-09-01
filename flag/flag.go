@@ -52,7 +52,7 @@ func FlagParse() (args *Args, web bool, hdb bool) {
 	flag.IntVar(&TTL, "t", 3, "-t 3")
 	flag.Parse() 
 	
-	if flag.NFlag() == 0 {
+	if flag.NFlag() == 0 && flag.NArg() == 0 {
 		fmt.Println(err.ErrArgsLack)
 		return nil, false, false
 	}
