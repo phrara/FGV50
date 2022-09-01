@@ -26,3 +26,9 @@ func NewRes(host, proto, typ, idstr, bstr string, port, ttl int, buf []byte, idb
 		BString: bstr,  
 	}
 }
+
+type HardWare struct {
+	Host string `json:"host"`
+	Mac string `json:"mac"`
+	Dev string `json:"dev"`
+}

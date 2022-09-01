@@ -59,7 +59,7 @@ class aliyun:
                 'cve_id': content[0].strip(),
                 'vul_name': content[1],
                 'vul_type': content[2].strip(),
-                'cve_date': content[3].strip(),
+                'cve_date': content[3].strip().replace("-",","),
                 'is_cve': content[-2].strip(),
                 'is_poc': content[-1].strip()
             }

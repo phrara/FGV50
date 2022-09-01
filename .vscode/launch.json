@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${file}",
-            "args": ["-u", "https://www.bilibili.com/"]
+            "args": ["webui"]
         }
     ]
 }

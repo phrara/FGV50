@@ -30,6 +30,7 @@ require (
 
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
+	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/syndtr/goleveldb v1.0.0
 	github.com/twmb/murmur3 v1.1.6

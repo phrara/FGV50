@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="dist\css\bootstrap.min.css"/>
+  <link href="bg.css" rel="stylesheet">
+  <link href="font\bootstrap-icons.css" rel="stylesheet">
+  <script src="dist\js\jquery-3.6.1.js"></script>
+  <script src="dist\js\bootstrap.bundle.js"></script>
+  <script src="echarts.js"></script>
+  <script src="chart.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <!-- 遮罩  -->
+  
+  <div id="loading"></div>
+  <div class="bg">
+    <div class="container-fluid">
+      <div style="text-align:center";>
+        <img src="img\logo.png" width="100px";>
+      </div>
+      <h1 style="text-align:center">标题</h1>
+      <p style="text-align:center">介绍</p>
+      <!-- 下拉菜单按钮 -->
+      <div class="col">
+        <button type="button" id="history" class="btn btn-dark btn-lg dropdown-toggle offset-10" data-toggle="dropdown">
+          <i class="bi bi-list-stars"></i>
+          &nbsp;&nbsp;&nbsp;历史记录&nbsp;&nbsp;&nbsp;&nbsp;
+        </button>
+        <ul class="dropdown-menu">
+          <li><a id="li_1" class="dropdown-item" href="#"></a>
+          </li>
+          <li><a id="li_2" class="dropdown-item" href="#"></a>
+          </li>
+          <li><a id="li_3" class="dropdown-item" href="#"></a>
+          </li>
+          <li><a id="li_4" class="dropdown-item" href="#"></a>
+          </li>
+          <li><a id="li_5" class="dropdown-item" href="#"></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+      <div class="dropdown row">
+        <!-- 下拉菜单按钮 -->
+
+        <div class="col">
+
+          <select id="select1" class="btn btn-dark dropdown-toggle offset-2">
+            <i class="bi bi-list-stars"></i>
+            <option value="i" class="dropdown-item text-light" href="#">IP扫描</option>
+            <option value="u" class="dropdown-item text-light" href="#">URL扫描</option>
+            <option value="ns" class="dropdown-item text-light" href="#">网段扫描</option>
+          </select>
+        </div>
+        <!-- 输入框 -->
+        <div class="col-md-6">
+          <input type="text" type="file" id="ip_url" class="form-control"  placeholder="Please input"/>
+        </div>
+        <!-- 下拉菜单按钮 -->
+        <div class="col">
+          <select id="select2" class="btn btn-dark dropdown-toggle offset-2">
+            <i class="bi bi-list-stars"></i>
+            <option value="p" class="dropdown-item text-light" href="#">端口扫描</option>
+          </select>
+        </div>
+        <!-- 输入框 -->
+        <div class="col-md-2">
+          <input type="text" type="file" id="param" class="form-control" placeholder="Please input"/>
+        </div>
+        <!-- 确定按钮 -->
+        <div class="col">
+          <button id="confirm" type="button" class="btn btn-dark " >
+            <i class="bi bi-caret-right-fill"></i>
+            <a onclick="getInput()"></a>
+          </button>
+        </div>
+      </div>
+      <br/>
+      <br/>
+      <!-- 网络拓扑图 -->
+      <div style="width: 100%;height:800px;" id="net_chart" >
+        <!-- <img id="netTopology" src="img\initial.jpg" alt="网络拓扑图" width="800px";> -->
+      </div>
+      <br/>
+      <br/>
+      <!-- 表格 -->
+      <div>
+        <table class="table table-striped table-bordered table-hover" id="tab">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <br/>
+      <br/>
+  </div>
+  
+  <script>
+  var datas
+  function maketable(){
+    if(datas){
+      console.log(1)
+      var tablestr="";
+      for(let j=0;j<datas.data.vul.length;j++)
+      {
+        for(var key in datas.data.vul[j]){
+          var vul_i=datas.data.vul[j][key];
+          // console.log(key);
+          // console.log(vul_i);
+          // console.log(vul_i[0]);
+        
+          tablestr="<tr><td>"+key+"</td></tr>"+"<tr><td>漏洞ID</td><td>漏洞名</td><td>漏洞类型</td><td>漏洞发现时间</td><td>CVE</td><td>POC</td></tr>";
+          console.log(1);
+          $("#tab").append(tablestr);
+          for(let i=0;i<vul_i.length;i++){
+            //拼接表格的行与列
+            //json日期格式转换
+            console.log(vul_i[i].cve_date)
+            // var my_cve_data = new Date(vul_i[i].cve_data).format("yyyy-MM-dd hh:mm:ss")
+            tablestr = "<tr><td>"+vul_i[i].cve_id+"</td><td>"+vul_i[i].vul_name+"</td><td>"+vul_i[i].vul_type+"</td><td>"+vul_i[i].cve_date+"</td><td>"+vul_i[i].is_cve+"</td><td>"+vul_i[i].is_poc+"</td></tr>";
+            $("#tab").append(tablestr);
+          }
+        }
+      }
+      
+  }
+}
+  </script>
+
+  <script>
+        // 对Date的扩展，将 Date 转化为指定格式的String
+    // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符， 
+    // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字) 
+    // 例子： 
+    // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423 
+    // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18 
+    Date.prototype.format = function(fmt) {
+        var o = {
+            "M+" : this.getMonth() + 1, //月份 
+            "d+" : this.getDate(), //日 
+            "h+" : this.getHours(), //小时 
+            "m+" : this.getMinutes(), //分 
+            "s+" : this.getSeconds(), //秒 
+            "q+" : Math.floor((this.getMonth() + 3) / 3), //季度 
+            "S" : this.getMilliseconds()
+        //毫秒 
+        };
+        if (/(y+)/.test(fmt))
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "")
+                    .substr(4 - RegExp.$1.length));
+        for ( var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k])
+                        : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+  </script>
+
+  <script>
+    function getInput(){
+      var sch = document.getElementById('text_input').value;
+      console.log(sch);
+    }
+    var btn = document.querySelector('button');
+    console.log(btn);
+    var btn_options = document.querySelectorAll('li');
+    console.log(btn_options);
+    var btn_cf = document.getElementById('confirm');
+    var graph = document.getElementById('netTopology')
+    console.log(graph);
+    //表格对象数组，占位
+    // var tableData = [
+    //   {
+    //     Th1: 11,
+    //     Th2: 22,
+    //     Th3: 45
+    //   },{
+    //     Th1: 66,
+    //     Th2: 14,
+    //     Th3: 98
+    //   },{  
+    //     Th1: 12,
+    //     Th2: 27,
+    //     Th3: 69
+    //   },{  
+    //     Th1: 89,
+    //     Th2: 52,
+    //     Th3: 49
+    //   }];
+    // // 生成动态表格
+    // function createTable(){
+    //   var tbody = document.querySelector('tbody');
+    //   for(var i =0; i < tableData.length; i++)
+    //   {
+    //     var tr = document.createElement('tr');
+    //     tbody.appendChild(tr);
+    //     for(var k in tableData[i]){
+    //       var td = document.createElement('td');
+    //       td.innerHTML = tableData[i][k];
+    //       tr.appendChild(td);
+    //     }
+    //   }
+    // }
+    // function deleteTable(){
+    //   var tb = document.querySelector('table');
+    //     var rowNum=tb.rows.length;
+    //     for (var i=1; i < rowNum; i++){
+    //       tb.deleteRow(i);
+    //       rowNum--;
+    //       i--;
+    //     }
+    // }
+    btn_cf.onclick = function(){
+      // graph.src = 'img\\logo.png';      //更换网络拓扑图
+      deleteTable();
+      createTable();
+    }
+  </script>
+
+
+  <script>
+    
+    var Btn = document.getElementById("confirm")
+    var Hist = document.getElementById("history")
+    var li = document.getElementsByTagName('li')
+    //点击确定按钮
+    Btn.onmouseup = function()
+    {
+      loading.open("loading")
+      // maketable()
+      var ip_url = document.getElementById("ip_url")
+      var sel_1 = document.getElementById("select1")
+      var param = document.getElementById("param")
+      var sel_2 = document.getElementById("select2")
+
+      console.log('sel:',sel_1.value,sel_2.value)
+      console.log('text:',ip_url.value,param.value)
+
+        if(ip_url.value != ""){
+          if(sel_1.value == 'i'){
+            var _ip = ip_url.value
+            var _type = 'i'
+          }
+          else if(sel_1.value == 'u'){
+            var _url = ip_url.value
+            var _type = 'u'
+          }
+          else if(sel_1.value == 'ns'){
+            var _ns = ip_url.value
+            var _type = 'ns'
+          }
+
+          if(!_url){
+            _url = ""
+          }
+          if(!_ip){
+            _ip = ""
+          }
+          if(!_port){
+            _port = ""
+          }
+          if(!_ns){
+            _ns = ""
+          }
+          console.log("zzzzzz")
+          if(param.value != "" && sel_2.value == 'p'){
+            var _port = Number(param.value)
+            console.log('port:',_port,typeof(_port))
+          }
+          
+          //ajax 发起post请求
+          var xhr = new XMLHttpRequest();
+          xhr.open('POST','http://127.0.0.1:8989/cmd');
+          xhr.setRequestHeader('Content-Type','application/json')
+          console.log('1')
+          let obj = {
+            "cmd_type": _type,                     //_type,i或u或ns，这里界面需要改，变量就是这样
+            "url": _url,                                // _url
+            "ip": _ip,                                  //_ip
+            "port": _port,                               // _port端口可有可无，int型
+            "network_segment": _ns          //网段_ns
+          }
+          console.log('2')
+          xhr.send(JSON.stringify(obj));
+          console.log('JSON.stringify(obj):',JSON.stringify(obj))
+          console.log('3')
+          xhr.onreadystatechange=function(){
+            // if(xhr.readyState == 4 && xhr.status == 200){
+              loading.close("loading")
+              console.log(xhr.responseText)
+              console.log(JSON.parse(xhr.responseText))
+              datas = JSON.parse(xhr.responseText);
+              console.log(datas)
+              // 添加一条历史记录
+              maketable();
+              console.log('data:',datas)
+              console.log('添加一条历史记录，length:',localStorage.length)
+              //JSON日期格式转换
+              //var mytime = new Date(datas.data.time).format("yyyy-MM-dd hh:mm:ss")
+              localStorage.setItem(localStorage.length, datas.data.time)
+              // localStorage.setItem(localStorage.length, '123213')
+              console.log(localStorage)
+              
+              var myChart = echarts.init(document.getElementById('net_chart'), "dark", {renderer: 'canvas'});
+              myChart.hideLoading()
+
+              var opt = getOption()
+
+              //setRoot("1.1.1.0")
+              //addIP(ip1)
+              //addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
+              
+              //setRoot(datas.data.res[0].host)
+              addIP(datas.data.res[0].host)
+              addPortInfo(datas.data.res[0].host, datas.data.res[0].port, datas.data.res[0].protocol, datas.data.res[0].banner)
+
+              myChart.setOption(opt);
+              
+            // }
+          }
+          
+          
+          
+        }
+        
+    }
+
+    //点击历史记录按钮，读取localStorage并将内容显示到历史记录下拉框上
+    Hist.onmousedown = function()
+    {
+      console.log(localStorage.length)
+      var li_1 = document.getElementById("li_1")
+      var li_2 = document.getElementById("li_2")
+      var li_3 = document.getElementById("li_3")
+      var li_4 = document.getElementById("li_4")
+      var li_5 = document.getElementById("li_5")
+      var li = [li_1,li_2,li_3,li_4,li_5]
+      console.log('localStorage',localStorage)
+      for (i = 0, j = localStorage.length-1; i < li.length , j >=0; i++, j--){
+        // var key = localStorage.key(j)
+        a = String(j)
+        li[i].value = localStorage.getItem(a)
+        var str = localStorage.getItem(a)
+        li[i].text = str
+      }
+       
+
+
+
+    }
+
+    len = li.length
+    
+    
+    // 遍历所有li标签，并设置点击事件
+    for(var i=0;i<len;i++){
+      li[i].onclick = function(){
+        if(this.innerText != ""){
+            histcmd = this.innerText
+            // window.sessionStorage.setItem('datas', );
+            // console.log('dingzhen',sessionStorage.getItem('datas'))
+            // location.replace("history.html");
+            var xhr1 = new XMLHttpRequest();
+            console.log('123')
+            xhr1.open('POST','http://127.0.0.1:8989/hist');
+            xhr1.setRequestHeader('Content-Type','application/json')
+            
+            let obj1 = {
+              "time": histcmd
+            }
+            xhr1.send(JSON.stringify(obj1));
+            xhr1.onreadystatechange=function(){
+            datas= JSON.parse(xhr1.responseText);
+            //点击后的事件：
+
+            
+            
+            //设置sessionStorage：-----------主要代码-------------------------------
+            let d = JSON.stringify(datas)
+            window.sessionStorage.setItem('datas', d);
+            //跳转路径
+            location.replace("history.html");
+            
+            //在跳转后页面，通过getItem方法来获取
+            // var username = window.sessionStorage.getItem('username');
+            // var password = window.sessionStorage.getItem('password');
+            }
+          
+
+          }
+        }
+      }
+
+    loading = {
+          open : function(domIDstr){
+              var scrollY = 1110; 
+              var scrollX = 1110;
+              if (window.pageYOffset) {
+                scrollY = window.pageYOffset; 
+                scrollX = window.pageXOffset;
+              } else if (document.compatMode && document.compatMode != 'BackCompat') {
+                scrollY = document.documentElement.scrollTop;
+                scrollX = document.documentElement.scrollLeft;
+              } else if (document.body) { 
+                scrollY = document.body.scrollTop;
+                scrollX = document.body.scrollLeft;
+              }
+              var loading = document.getElementById(domIDstr);
+              loading.style.position='absolute';
+              loading.style.zIndex="100";
+              loading.style.visibility='visible';
+              loading.style.left = (600 + scrollX) + 'px';
+              loading.style.top = (400 + scrollY) + 'px';
+              var str = '<span style="background:#FFF url(4.gif) no-repeat scroll 10px center;padding: 100px 200px 100px 200px; border:solid 3px teal; border-radius: 7px; color:Olive;"></span>';
+              loading.innerHTML = str;
+          },
+          close : function(domIDstr){
+              var loading = document.getElementById(domIDstr);
+              loading.style.visibility = 'hidden';
+          }
+      };
+      // localStorage.clear()
+  </script>
+
+  <!-- <script>
+    datas={
+      "msg": "ok",
+      "data": {
+        "time": "2022-09-01 15:51:07",
+        "res": [
+            {
+                "time": "2022-09-01 15:51:06",
+                "host": "127.0.0.1",
+                "port": 445,
+                "protocol": "smb",
+                "type": "tcp",
+                "idstring": "",
+                "banner": "Version:10.0.22000||DNSComputer:LAPTOP-FUN1PSMS||TargetName:LAPTOP-FUN1PSMS||NetbiosComputer:LAPTOP-FUN1PSMS"
+            }
+        ],
+        "vul": [
+          {
+            "smb": [
+              {
+                "cve_id": "AVD-2022-35804",
+                "vul_name": "SMB 客户端和服务器远程代码执行漏洞",
+                "vul_type": "未定义",
+                "cve_date": "2022-08-09",
+                "is_cve": "CVE-2022-35804",
+                "is_poc": "暂无可利用代码\""
+              },
+              {
+                "cve_id": "AVD-2022-32230",
+                "vul_name": "Windows SMB 拒绝服务漏洞",
+                "vul_type": "CWE-476",
+                "cve_date": "2022-06-14",
+                "is_cve": "CVE-2022-32230",
+                "is_poc": "暂无可利用代码\""
+              }
+            ],
+            "hasj": [
+              {
+                "cve_id": "AVD-2022-35804",
+                "vul_name": "SMB 客户端和服务器远程代码执行漏洞",
+                "vul_type": "未定义",
+                "cve_date": "2022-08-09",
+                "is_cve": "CVE-2022-35804",
+                "is_poc": "暂无可利用代码\""
+              },
+              {
+                "cve_id": "AVD-2022-32230",
+                "vul_name": "Windows SMB 拒绝服务漏洞",
+                "vul_type": "CWE-476",
+                "cve_date": "2022-06-14",
+                "is_cve": "CVE-2022-32230",
+                "is_poc": "暂无可利用代码\""
+              }
+            ]
+          }
+        ]
+      }
+    }
+    maketable();
+  </script> -->
+
+</body>
+</html>

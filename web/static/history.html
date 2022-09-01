@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="dist\css\bootstrap.min.css"/>
+  <link href="bg.css" rel="stylesheet">
+  <link href="font\bootstrap-icons.css" rel="stylesheet">
+  <script src="dist\js\jquery-3.6.1.js"></script>
+  <script src="dist\js\bootstrap.bundle.js"></script>
+  <script src="echarts.js"></script>
+  <script src="chart.js"></script>
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="bg">
+    <div class="container-fluid">
+      <div style="text-align:center";>
+        <img src="img\logo.png" width="100px";>
+      </div>
+      <h1 style="text-align:center">标题</h1>
+      <p style="text-align:center">介绍</p>
+    </div>
+  </div>
+  <div class="container">
+      <div class="dropdown row">
+        <!-- 下拉菜单按钮 -->
+        <div class="col">
+          <button type="button" class="btn btn-dark dropdown-toggle offset-11" data-toggle="dropdown">
+            <i class="bi bi-list-stars"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="#">选项 1</a>
+            </li>
+            <li><a class="dropdown-item" href="#">选项 2</a>
+            </li>
+            <li><a class="dropdown-item" href="#">选项 3</a>
+            </li>
+          </ul>
+        </div>
+        <!-- 输入框 -->
+        <div class="col">
+          <input type="text" id="text_input" class="form-control" placeholder="Please input"/>
+        </div>
+        <!-- 确定按钮 -->
+        <div class="col">
+          <button id="confirm" type="button" class="btn btn-dark " >
+            <i class="bi bi-caret-right-fill"></i>
+            <a onclick="getInput()"></a>
+          </button>
+        </div>
+      </div>
+      <br/>
+      <br/>
+      <!-- 网络拓扑图 -->
+      <div style="width: 100%;height:800px;" id="hnet_chart">
+        <!-- <img src="img\initial.jpg" alt="网络拓扑图" width="700px";> -->
+      </div>
+      <br/>
+      <br/>
+      <!-- 表格 -->
+      <div>
+        <table class="table table-striped table-bordered table-hover" id="tab">
+          <thead>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+      <br/>
+      <br/>
+  </div>
+  <script>
+    function getInput(){
+      var sch = document.getElementById('text_input').value;
+      console.log(sch);
+    }
+    var btn = document.querySelector('button');
+    console.log(btn);
+    var btn_options = document.querySelectorAll('li');
+    console.log(btn_options);
+    var btn_cf = document.getElementById('confirm');
+    var graph = document.querySelector('img')
+    console.log(graph);
+    // 生成动态表格
+    function createTable(){
+      var tableDates = [
+      {
+        Th1: 11,
+        Th2: 22,
+        Th3: 45
+      },{
+        Th1: 66,
+        Th2: 14,
+        Th3: 98
+      },{  
+        Th1: 12,
+        Th2: 27,
+        Th3: 69
+      },{  Th1: 89,
+        Th2: 52,
+        Th3: 49
+      }];
+      var tbody = document.querySelector('tbody');
+      for(var i =0; i < tableDates.length; i++)
+      {
+        var tr = document.createElement('tr');
+        tbody.appendChild(tr);
+        for(var k in tableDates[i]){
+          var td = document.createElement('td');
+          td.innerHTML = tableDates[i][k];
+          tr.appendChild(td);
+        }
+      }
+    }
+    function deleteTable(){
+      var tb = document.querySelector('table');
+        var rowNum=tb.rows.length;
+        for (var i=1; i < rowNum; i++){
+          tb.deleteRow(i);
+          rowNum--;
+          i--;
+        }
+      }
+    btn_cf.onclick = function(){
+      // graph.src = 'img\\logo.png';      //更换网络拓扑图
+      deleteTable();
+      createTable();
+    }
+  </script>
+
+<script>
+  var d
+  function maketable(){
+    if(d){
+      console.log(1)
+      var tablestr="";
+      for(let j=0;j<d.data.vul.length;j++)
+      {
+        for(var key in d.data.vul[j]){
+          var vul_i=d.data.vul[j][key];
+          // console.log(key);
+          // console.log(vul_i);
+          // console.log(vul_i[0]);
+        
+          tablestr="<tr><td>"+key+"</td></tr>"+"<tr><td>漏洞ID</td><td>漏洞名</td><td>漏洞类型</td><td>漏洞发现时间</td><td>CVE</td><td>POC</td></tr>";
+          console.log(1);
+          $("#tab").append(tablestr);
+          for(let i=0;i<vul_i.length;i++){
+            //拼接表格的行与列
+            //json日期格式转换
+            // console.log(vul_i[i].cve_data)
+            // var my_cve_data = new Date(vul_i[i].cve_data).format("yyyy-MM-dd hh:mm:ss")
+            tablestr = "<tr><td>"+vul_i[i].cve_id+"</td><td>"+vul_i[i].vul_name+"</td><td>"+vul_i[i].vul_type+"</td><td>"+vul_i[i].cve_date+"</td><td>"+vul_i[i].is_cve+"</td><td>"+vul_i[i].is_poc+"</td></tr>";
+            $("#tab").append(tablestr);
+          }
+        }
+      }
+      
+  }
+}
+  </script>
+
+  <script>
+    datas = window.sessionStorage.getItem('datas')
+    d = JSON.parse(datas)
+    console.log('datas:',d)
+    maketable()
+    var myChart = echarts.init(document.getElementById('hnet_chart'), "dark", {renderer: 'canvas'});
+    myChart.hideLoading()
+    var opt = getOption()
+    setRoot("1.1.1.0")
+    var ip1 = "1.1.1.1"
+    var ip2 = "1.1.1.2"
+    var ip3 = "1.1.1.3"
+    var ip4 = "1.1.1.4"
+    var ip5 = "1.1.1.5"
+    var ip6 = "1.1.1.6"
+    var ip7 = "1.1.1.7"
+
+    addIP(ip1)
+    addIP(ip2)
+    addIP(ip3)
+    addIP(ip4)
+    addIP(ip5)
+    addIP(ip6)
+    addIP(ip7)
+    addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
+    addPortInfo(ip1, 3307, "mysql","Version_8.0.25")
+    addPortInfo(ip2, 3306,"mysql", "Version_8.0.25")
+    addPortInfo(ip2, 3307, "mysql","Version_8.0.25")
+    addPortInfo(ip3, 3308, "mysql","Version_8.0.25")
+    addPortInfo(ip2, 3308, "mysql","Version_8.0.25")
+    addPortInfo(ip5, 3308, "mysql","Version_8.0.25")
+    addPortInfo(ip4, 3308, "mysql","Version_8.0.25")
+    addPortInfo(ip6, 3308, "mysql","Version_8.0.25")
+    addPortInfo(ip7, 3308, "mysql","Version_8.0.25")
+
+    myChart.setOption(opt);
+  </script>
+
+</body>
+</html>
