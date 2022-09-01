@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"encoding/json"
 	"fgv50/err"
 	"fgv50/flag"
 	"fgv50/scanner"
 	"fgv50/tools"
+	"fgv50/tools/storage"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,6 +35,14 @@ const (
 )
 
 func CommandExec(c *gin.Context) {
+	hdb, ok := c.Get("histDB")
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"msg": err.ErrLevelDBInit.Error(),
+			"data": nil,
+		})
+		return
+	}
 	var cmd Cmd
 	if err1 := c.ShouldBind(&cmd); err1 != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -52,13 +61,14 @@ func CommandExec(c *gin.Context) {
 				})
 				return
 			} else {
-				scanner.RunCli(args)
-				// TODO: read result json from file
-				var resBytes []byte
-				json.Unmarshal(resBytes, 1) 
+				args.HistDB = hdb.(*storage.HisDB)
+				kTime := scanner.RunCli(args)
 				
-
-
+				// read results and vuls from histDB
+				vRes, vVul := args.HistDB.GetRecord(kTime)
+				
+				c.String(http.StatusOK, fmt.Sprintf("%s@%s", string(vRes), string(vVul)))
+				return
 
 			}
 

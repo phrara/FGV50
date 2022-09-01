@@ -8,10 +8,6 @@ import (
 
 )
 
-func init() {
-
-	
-}
 type ScanTask struct {
 	Host string
 	Port int

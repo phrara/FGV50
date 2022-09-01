@@ -2,45 +2,29 @@ package tools
 
 import (
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 )
 
-var resFilePath string
-
+var ( 
+	resFilePath string
+   	vulJsonPath string
+)
 func init() {
 	resFilePath, _ = os.Getwd()
+	vulJsonPath, _ = os.Getwd()
 	resFilePath = filepath.Join(resFilePath, "/json/res.json")
+	vulJsonPath = filepath.Join(vulJsonPath, "/json/ali_cve.json")
 }
 
 func Open() *os.File {
 	return openFile(resFilePath)
 }
 
-func Write(reslist []*Result, output *os.File, total int) {
-	cnts := make([]map[string]interface{}, 0, total)
-	for _, v := range reslist {
-		if v.Protocol == "" {
-			continue
-		}
-		content := make(map[string]interface{})
-		content["time"]=time.Now().Format("2006-01-02 15:04:05")
-		content["type"]=v.Type
-		content["protocol"]=v.Protocol
-		content["host"]=v.Host
-		content["port"]=v.Port
-		content["idstring"]=v.IdString
-		content["banner"]=v.BString
-		cnts = append(cnts, content)
-		
-	}
-	mjson,_ :=json.Marshal(cnts)
-	writeContent(output, string(mjson))
-
+func Write(resJson []byte, output *os.File) {
+	writeContent(output, string(resJson))
 }
 
 func Close(file *os.File) {

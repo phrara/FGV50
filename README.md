@@ -47,3 +47,8 @@ $  make build
 ``` 
 The final executable file will be in the directory: `/out`
 
+## Data Structure
++ 使用阻塞队列来构成协程池，以及扫描结果输出
++ json
++ leveldb
+  

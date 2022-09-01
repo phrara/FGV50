@@ -3,16 +3,37 @@ package main
 import (
 	"fgv50/flag"
 	"fgv50/scanner"
+	"fgv50/tools/storage"
+	"fgv50/web"
 	"fmt"
 )
 
 func main() {
-	if args, b := flag.FlagParse(); b {
-		fmt.Println("web ui is prepared")
+	args, w, hdb := flag.FlagParse()
+	if w {
+		// open history db
+		hd, err := storage.NewHistDB()
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		// TODO: start web server
+		web.StartUpWeb(hd)
+
 	} else {
-		scanner.RunCli(args)
-		fmt.Println("execute successfully")
-		return
+		if hdb {
+			// open history db
+			hd, err := storage.NewHistDB()
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			args.HistDB = hd
+		}
+		// start up scanning	
+		b := scanner.RunCli(args)
+		fmt.Println("execute successfully:", string(b))
+		return		
 	}
 
 }

@@ -3,6 +3,7 @@ package flag
 import (
 	"fgv50/err"
 	"fgv50/tools/addr"
+	"fgv50/tools/storage"
 	"fmt"
 	"net/url"
 	"strconv"
@@ -21,6 +22,7 @@ type Args struct {
 	Hosts []string `json:"hosts"`
 	Ports []int    `json:"ports"`
 	TTL int `json:"ttl"`
+	HistDB *storage.HisDB
 }
 
 func NewArgs(u, ns, ip string, port int, ttl int) (*Args, error) {

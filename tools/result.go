@@ -1,13 +1,14 @@
 package tools
 
 type Result struct {
+	Time string `json:"time"`
 	Host string `json:"host"`
 	Port int `json:"port"`
 	Protocol string `json:"protocol"`
-	TTL int `json:"ttl"`
-	Buf []byte `json:"buf"`
+	TTL int `json:"-"`
+	Buf []byte `json:"-"`
 	Type string `json:"type"`
-	IdBool   bool `json:"id_bool"`
+	IdBool   bool `json:"-"`
 	IdString  string `json:"idstring"`
 	BString  string `json:"banner"`
 }
