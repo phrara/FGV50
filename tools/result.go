@@ -1,34 +1,42 @@
 package tools
 
 type Result struct {
-	Time string `json:"time"`
-	Host string `json:"host"`
-	Port int `json:"port"`
+	Time     string `json:"time"`
+	Host     string `json:"host"`
+	Port     int    `json:"port"`
 	Protocol string `json:"protocol"`
-	TTL int `json:"-"`
-	Buf []byte `json:"-"`
-	Type string `json:"type"`
-	IdBool   bool `json:"-"`
-	IdString  string `json:"idstring"`
+	TTL      int    `json:"-"`
+	Buf      []byte `json:"-"`
+	Type     string `json:"type"`
+	IdBool   bool   `json:"-"`
+	IdString string `json:"idstring"`
 	BString  string `json:"banner"`
 }
 
 func NewRes(host, proto, typ, idstr, bstr string, port, ttl int, buf []byte, idb bool) *Result {
 	return &Result{
-		Host: host,
-		Port: port,
+		Host:     host,
+		Port:     port,
 		Protocol: proto,
-		TTL: ttl,
-		Buf: buf,
-		Type: typ,
-		IdBool: idb,   
+		TTL:      ttl,
+		Buf:      buf,
+		Type:     typ,
+		IdBool:   idb,
 		IdString: idstr,
-		BString: bstr,  
+		BString:  bstr,
 	}
 }
 
 type HardWare struct {
 	Host string `json:"host"`
-	Mac string `json:"mac"`
-	Dev string `json:"dev"`
+	Mac  string `json:"mac"`
+	Dev  string `json:"dev"`
+}
+
+func NewHardWare(host, mac, dev string) *HardWare {
+	return &HardWare{
+		Host: host,
+		Mac:  mac,
+		Dev:  dev,
+	}
 }

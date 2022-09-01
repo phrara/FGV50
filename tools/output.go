@@ -11,16 +11,22 @@ import (
 var ( 
 	resFilePath string
    	vulJsonPath string
+	hdJsonPath string
 )
 func init() {
 	resFilePath, _ = os.Getwd()
 	vulJsonPath, _ = os.Getwd()
+	hdJsonPath,_ = os.Getwd()
 	resFilePath = filepath.Join(resFilePath, "/json/res.json")
 	vulJsonPath = filepath.Join(vulJsonPath, "/json/ali_cve.json")
+	hdJsonPath = filepath.Join(hdJsonPath,"/json/hd.json")
 }
 
-func Open() *os.File {
+func OpenRes() *os.File {
 	return openFile(resFilePath)
+}
+func OpenHd() *os.File {
+	return openFile(hdJsonPath)
 }
 
 func Write(resJson []byte, output *os.File) {

@@ -66,7 +66,7 @@ func RunCli(args *flag.Args) []byte {
 		// initiate the workpool
 		processor, wp := initWorkPool(total)
 
-		resfile := tools.Open()
+		resfile := tools.OpenRes()
 
 		count := 0
 		for _, h := range aliveHosts {
@@ -134,6 +134,19 @@ func RunCli(args *flag.Args) []byte {
 		}
 		wg.Wait()
 		wp.Shut()
+		//TODO
+		tools.ARP()
+		hardWareList:=make([]tools.HardWare,0,len(aliveHosts))
+		for _, h := range aliveHosts {
+			mac,dev:=tools.FindMac(h)
+			hd:=tools.NewHardWare(h,mac,dev)
+			hardWareList = append(hardWareList, *hd)
+		}
+		hdListJson, _ := json.Marshal(hardWareList)
+		hdfile:=tools.OpenHd()
+		// write resJson into res.json
+		tools.Write(hdListJson, hdfile)
+		tools.Close(hdfile)
 
 		resJson, _ := json.Marshal(resList)
 
@@ -143,7 +156,7 @@ func RunCli(args *flag.Args) []byte {
 
 		// start up the spider to relate the info to vuls
 		// write vulJson to ali_cve.json
-		py := exec.Command("python3", pyScriptPath)
+		py := exec.Command("python", pyScriptPath)
 		err1 := py.Run()
 		if err1 != nil {
 			fmt.Println(fmt.Errorf("%s: %s", err.ErrRunPython, err1))
@@ -165,7 +178,7 @@ func RunCli(args *flag.Args) []byte {
 	} else {
 		
 		r := &tools.Result{}
-		resfile := tools.Open()
+		resfile := tools.OpenRes()
 		resList := make([]tools.Result, 0, 1)
 		switch args.Url.Scheme {
 		case "http":
@@ -203,7 +216,7 @@ func RunCli(args *flag.Args) []byte {
 
 		// start up the spider to relate the info to vuls
 		// write vulJson to ali_cve.json
-		py := exec.Command("python3", pyScriptPath)
+		py := exec.Command("python", pyScriptPath)
 		err1 := py.Run()
 		if err1 != nil {
 			fmt.Println(fmt.Errorf("%s: %s", err.ErrRunPython, err1))
