@@ -15,10 +15,13 @@ func IdentifyTcp(ret *tools.Result) bool {
 	if ok {
 		return true
 	}
-	 ok = TcpSMB(ret)
-	  
-	 if ok {
-	 	return true
+	ok = TcpSMB(ret)
+	if ok {
+		return true
+	}
+	ok=TcpHTTP(ret,"")
+	 if ok{
+		return true 
 	 }
 
 	return false
@@ -43,6 +46,12 @@ func IdentifyTls(result *tools.Result) bool {
 	}
 	if protocol == "redis-ssl" || runAll {
 		if TlsRedisSsl(result) {
+			return true
+		}
+	}
+	if protocol == "http" || protocol == "https" || runAll {
+		if  TlsHTTPS(result,"")  {
+			
 			return true
 		}
 	}

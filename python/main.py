@@ -82,7 +82,8 @@ class aliyun:
             for item in res:
                 keywords.append(item["protocol"])
                 if item["idstring"] != "":
-                    keywords.append(item["idstring"])
+                    for server in item["idstring"].split(","):
+                        keywords.append(server)
         print('*' * 74)
         # 记录开始查询起始时间
         start_time = time.time()
