@@ -53,9 +53,11 @@ func TcpConnjudge(ret *tools.Result) bool {
 	ok = TcpSocks(ret)
 	if ok {
 		return true
+	} else {
+		
+		return false
 	}
 
-	return false
 
 }
 
@@ -287,7 +289,7 @@ func TcpOracle(ret *tools.Result) bool {
 	if conn != nil {
 		_ = conn.Close()
 	}
-	ok, err := regexp.Match(`\(DESCRIPTION=`, ret.Buf)
+	ok, _ := regexp.Match(`\(DESCRIPTION=`, ret.Buf)
 	if ok {
 		ret.Protocol = "oracle"
 	} else {
@@ -309,11 +311,11 @@ func TcpOracle(ret *tools.Result) bool {
 		ret.IdBool = false
 	}
 	hexVsnnum := strconv.FormatInt(v, 16)
-	maj, err := strconv.ParseUint(hexVsnnum[0:1], 16, 32)
-	min, err := strconv.ParseUint(hexVsnnum[1:2], 16, 32)
-	a, err := strconv.ParseUint(hexVsnnum[2:4], 16, 32)
-	b, err := strconv.ParseUint(hexVsnnum[4:5], 16, 32)
-	c, err := strconv.ParseUint(hexVsnnum[5:7], 16, 32)
+	maj, _ := strconv.ParseUint(hexVsnnum[0:1], 16, 32)
+	min, _ := strconv.ParseUint(hexVsnnum[1:2], 16, 32)
+	a, _ := strconv.ParseUint(hexVsnnum[2:4], 16, 32)
+	b, _ := strconv.ParseUint(hexVsnnum[4:5], 16, 32)
+	c, _ := strconv.ParseUint(hexVsnnum[5:7], 16, 32)
 	var version string
 	if err == nil {
 		version = fmt.Sprintf("%s.%s.%s.%s.%s",

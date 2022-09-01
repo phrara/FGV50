@@ -27,7 +27,7 @@ func ARP() {
 		panic(err)
 	}
 	// 因为结果是字节数组，需要转换成string
-	fmt.Println(string(output))
+	//fmt.Println(string(output))
 	//
 	filePath := "./tools/arp.txt"
 	file, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0666)

@@ -314,15 +314,22 @@
 
               var opt = getOption()
 
-              //setRoot("1.1.1.0")
+              setRoot("0.0.0.0")
               //addIP(ip1)
               //addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
               
               //setRoot(datas.data.res[0].host)
-              addIP(datas.data.res[0].host)
-              addPortInfo(datas.data.res[0].host, datas.data.res[0].port, datas.data.res[0].protocol, datas.data.res[0].banner)
+              for (let v of datas.data.res) {
+                  addIP(v.host)
+                  addPortInfo(v.host, v.port, v.protocol, v.banner)  
+              }
+              for (let v of datas.data.hd) {
+                  addIP(v.host + v.mac + v.dev)
+                  //  addHDInfo(v.host, v.mac, v.dev)
+              }
 
               myChart.setOption(opt);
+            
               
             // }
           }

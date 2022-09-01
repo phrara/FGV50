@@ -139,12 +139,12 @@ func RunCli(args *flag.Args) []byte {
 		hardWareList:=make([]tools.HardWare,0,len(aliveHosts))
 		for _, h := range aliveHosts {
 			mac,dev:=tools.FindMac(h)
-			hd:=tools.NewHardWare(h,mac,dev)
+			hd:=tools.NewHardWare(h, mac, dev)
 			hardWareList = append(hardWareList, *hd)
 		}
 		hdListJson, _ := json.Marshal(hardWareList)
 		hdfile:=tools.OpenHd()
-		// write resJson into res.json
+		// write hdListJson into hd.json
 		tools.Write(hdListJson, hdfile)
 		tools.Close(hdfile)
 
@@ -166,11 +166,14 @@ func RunCli(args *flag.Args) []byte {
 		// get a timestamp as historical index
 		kTime := []byte(time.Now().Format("2006-01-02 15:04:05"))
 		var kTime1 []byte = []byte(string(kTime))  
+		var kTime2 []byte = []byte(string(kTime))  
+
 		// read vulJson
 		vj := tools.ReadVulJson()
 		if args.HistDB != nil {
 			args.HistDB.PutVulRecord(kTime, vj)
 			args.HistDB.PutResRecord(kTime1, resJson)
+			args.HistDB.PutHDRecord(kTime2, hdListJson)
 		}
 
 		return kTime

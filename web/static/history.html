@@ -168,35 +168,24 @@
     d = JSON.parse(datas)
     console.log('datas:',d)
     maketable()
-    var myChart = echarts.init(document.getElementById('hnet_chart'), "dark", {renderer: 'canvas'});
+    
+    var myChart = echarts.init(document.getElementById('net_chart'), "dark", {renderer: 'canvas'});
     myChart.hideLoading()
-    var opt = getOption()
-    setRoot("1.1.1.0")
-    var ip1 = "1.1.1.1"
-    var ip2 = "1.1.1.2"
-    var ip3 = "1.1.1.3"
-    var ip4 = "1.1.1.4"
-    var ip5 = "1.1.1.5"
-    var ip6 = "1.1.1.6"
-    var ip7 = "1.1.1.7"
 
-    addIP(ip1)
-    addIP(ip2)
-    addIP(ip3)
-    addIP(ip4)
-    addIP(ip5)
-    addIP(ip6)
-    addIP(ip7)
-    addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
-    addPortInfo(ip1, 3307, "mysql","Version_8.0.25")
-    addPortInfo(ip2, 3306,"mysql", "Version_8.0.25")
-    addPortInfo(ip2, 3307, "mysql","Version_8.0.25")
-    addPortInfo(ip3, 3308, "mysql","Version_8.0.25")
-    addPortInfo(ip2, 3308, "mysql","Version_8.0.25")
-    addPortInfo(ip5, 3308, "mysql","Version_8.0.25")
-    addPortInfo(ip4, 3308, "mysql","Version_8.0.25")
-    addPortInfo(ip6, 3308, "mysql","Version_8.0.25")
-    addPortInfo(ip7, 3308, "mysql","Version_8.0.25")
+    var opt = getOption()
+
+    setRoot("0.0.0.0")
+    //addIP(ip1)
+    //addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
+    
+    //setRoot(datas.data.res[0].host)
+    for (let v of datas.data.res) {
+        addIP(v.host)
+        addPortInfo(v.host, v.port, v.protocol, v.banner)  
+    }
+    for (let v of datas.data.hd) {
+        addIP(hd.host)
+    }
 
     myChart.setOption(opt);
   </script>

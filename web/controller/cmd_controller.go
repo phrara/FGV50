@@ -60,9 +60,9 @@ func CommandExec(c *gin.Context) {
 				kTime := scanner.RunCli(args)
 				
 				// read results and vuls from histDB
-				vRes, vVul := args.HistDB.GetRecord(kTime)
+				vRes, vVul, vHD := args.HistDB.GetRecord(kTime)
 
-				resp := formatJson(string(kTime), vRes, vVul)
+				resp := formatJson(string(kTime), vRes, vVul, vHD)
 
 				c.String(http.StatusOK, resp)
 				return
@@ -82,9 +82,9 @@ func CommandExec(c *gin.Context) {
 				kTime := scanner.RunCli(args)
 				
 				// read results and vuls from histDB
-				vRes, vVul := args.HistDB.GetRecord(kTime)
+				vRes, vVul, vHD := args.HistDB.GetRecord(kTime)
 
-				resp := formatJson(string(kTime), vRes, vVul)
+				resp := formatJson(string(kTime), vRes, vVul, vHD)
 
 				c.String(http.StatusOK, resp)
 				return
@@ -102,9 +102,9 @@ func CommandExec(c *gin.Context) {
 				args.HistDB = hdb.(*storage.HisDB)
 				kTime := scanner.RunCli(args)
 				// read results and vuls from histDB
-				vRes, vVul := args.HistDB.GetRecord(kTime)
+				vRes, vVul, vHD := args.HistDB.GetRecord(kTime)
 
-				resp := formatJson(string(kTime), vRes, vVul)
+				resp := formatJson(string(kTime), vRes, vVul, vHD)
 
 				c.String(http.StatusOK, resp)
 				return
@@ -122,7 +122,7 @@ func CommandExec(c *gin.Context) {
 	}
 }
 
-func formatJson(time string, res, vul []byte) string {
+func formatJson(time string, res, vul, hd []byte) string {
 	var builder = &strings.Builder{}
 	builder.WriteString("{")
 	builder.WriteString(`"msg": "ok", `)
@@ -132,6 +132,8 @@ func formatJson(time string, res, vul []byte) string {
 	builder.Write(res)
 	builder.WriteString(`, "vul": `)
 	builder.Write(vul)
+	builder.WriteString(`, "hd":`)
+	builder.Write(hd)
 	builder.WriteString("}")
 	builder.WriteString("}")
 	return builder.String()

@@ -130,3 +130,14 @@ function addPortInfo(ip, port, proto, banner) {
         }
     }
 }
+
+function addHDInfo(ip, mac, dev) {
+  for (let v of option.series[0].data[0].children) {
+    if (ip === v.name) {
+        var c = {
+            "name": "mac:" + mac + "-" + "dev:" + dev
+        }
+        v.children.push(c)
+    }
+  }
+}

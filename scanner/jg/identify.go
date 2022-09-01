@@ -22,9 +22,11 @@ func IdentifyTcp(ret *tools.Result) bool {
 	ok=TcpHTTP(ret,"")
 	 if ok{
 		return true 
+	 } else {
+		
+		return false
 	 }
 
-	return false
 }
 
 func IdentifyTls(result *tools.Result) bool {

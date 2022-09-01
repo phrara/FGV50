@@ -23,7 +23,7 @@ type HisDB struct {
 
 func NewHistDB() (*HisDB, error) {
 	db, err1 := leveldb.OpenFile(histDBPath, &opt.Options{
-		BlockSize: 16 * opt.KiB,
+		BlockSize: 64 * opt.KiB,
 		CompactionTotalSize: 12 * opt.MiB,
 	})
 	if err1 != nil {
@@ -47,13 +47,22 @@ func (h *HisDB) PutVulRecord(kTime, vVul []byte) error {
 	return h.db.Put(kTime, vVul, nil)
 }
 
-func (h *HisDB) GetRecord(kTime []byte) (vRes []byte, vVul []byte) {
+func (h *HisDB) PutHDRecord(kTime, vHD []byte) error {
+	kTime = append(kTime, []byte("HD")...)
+	// println("==============",string(kTime), "==================================")
+
+	return h.db.Put(kTime, vHD, nil)
+}
+
+func (h *HisDB) GetRecord(kTime []byte) (vRes []byte, vVul []byte, vHD []byte) {
 	kTimeRes := []byte(string(kTime)+"RES")
 	kTimeVul := []byte(string(kTime)+"VUL")
+	kTimeHD := []byte(string(kTime)+"HD")
 	// println(string(kTimeRes), string(kTimeVul))
 	vRes, _ = h.db.Get(kTimeRes, nil)
 	vVul, _ = h.db.Get(kTimeVul, nil)
-	return vRes, vVul
+	vHD, _ = h.db.Get(kTimeHD, nil)
+	return vRes, vVul, vHD
 }
 
 func (h *HisDB) Close() {
