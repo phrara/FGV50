@@ -49,8 +49,6 @@ func writeContent(file *os.File, content string) {
 	_, err := file.Write([]byte(content + "\n"))
 	if err != nil {
 		fmt.Println("Write failed: " + content)
-	} else {
-		fmt.Println("Write Success: " + content)
 	}
 }
 

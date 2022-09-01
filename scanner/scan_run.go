@@ -93,7 +93,7 @@ func RunCli(args *flag.Args) []byte {
 					if ok && res.Protocol != "" {
 
 						res.Time = time.Now().Format("2006-01-02 15:04:05")
-						fmt.Println(res)
+						//fmt.Println(res)
 						resList = append(resList, *res)
 					}
 				}()
@@ -106,7 +106,7 @@ func RunCli(args *flag.Args) []byte {
 					if ok && res.Protocol != "" {
 
 						res.Time = time.Now().Format("2006-01-02 15:04:05")
-						fmt.Println(res)
+						//fmt.Println(res)
 						resList = append(resList, *res)
 					}
 				}()
@@ -118,7 +118,7 @@ func RunCli(args *flag.Args) []byte {
 					if ok && res.Protocol != "" {
 
 						res.Time = time.Now().Format("2006-01-02 15:04:05")
-						fmt.Println(res)
+						//fmt.Println(res)
 						resList = append(resList, *res)
 					}
 				}()
@@ -150,12 +150,13 @@ func RunCli(args *flag.Args) []byte {
 
 		// store to histDB
 		// get a timestamp as historical index
-		kTime := []byte(time.Now().Format("2006-01-02 15:04:05")) 
+		kTime := []byte(time.Now().Format("2006-01-02 15:04:05"))
+		var kTime1 []byte = []byte(string(kTime))  
 		// read vulJson
 		vj := tools.ReadVulJson()
 		if args.HistDB != nil {
 			args.HistDB.PutVulRecord(kTime, vj)
-			args.HistDB.PutResRecord(kTime, resJson)
+			args.HistDB.PutResRecord(kTime1, resJson)
 		}
 
 		return kTime

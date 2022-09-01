@@ -36,17 +36,21 @@ func NewHistDB() (*HisDB, error) {
 
 func (h *HisDB) PutResRecord(kTime, vRes []byte) error {
 	kTime = append(kTime, []byte("RES")...)
+	// println("==============",string(kTime), "==================================")
 	return h.db.Put(kTime, vRes, nil)
 }
 
 func (h *HisDB) PutVulRecord(kTime, vVul []byte) error {
 	kTime = append(kTime, []byte("VUL")...)
+	// println("==============",string(kTime), "==================================")
+
 	return h.db.Put(kTime, vVul, nil)
 }
 
 func (h *HisDB) GetRecord(kTime []byte) (vRes []byte, vVul []byte) {
-	kTimeRes := append(kTime, []byte("RES")...)
-	kTimeVul := append(kTime, []byte("VUL")...)
+	kTimeRes := []byte(string(kTime)+"RES")
+	kTimeVul := []byte(string(kTime)+"VUL")
+	// println(string(kTimeRes), string(kTimeVul))
 	vRes, _ = h.db.Get(kTimeRes, nil)
 	vVul, _ = h.db.Get(kTimeVul, nil)
 	return vRes, vVul

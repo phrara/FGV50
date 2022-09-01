@@ -4,20 +4,15 @@ import (
 	"fgv50/err"
 	"fgv50/flag"
 	"fgv50/scanner"
-	"fgv50/tools"
 	"fgv50/tools/storage"
-	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 
 type (
-	Resp struct {
-		ResList []tools.Result `json:"res_list"`
-
-	}
 	
 	Cmd struct {
 		CmdType string `json:"cmd_type"`
@@ -66,8 +61,10 @@ func CommandExec(c *gin.Context) {
 				
 				// read results and vuls from histDB
 				vRes, vVul := args.HistDB.GetRecord(kTime)
-				
-				c.String(http.StatusOK, fmt.Sprintf("%s@%s", string(vRes), string(vVul)))
+
+				resp := formatJson(string(kTime), vRes, vVul)
+
+				c.String(http.StatusOK, resp)
 				return
 
 			}
@@ -82,4 +79,16 @@ func CommandExec(c *gin.Context) {
 			return
 		}
 	}
+}
+
+func formatJson(time string, res, vul []byte) string {
+	var builder = &strings.Builder{}
+	builder.WriteString("{")
+	builder.WriteString(`"time": "` + time + `", `)
+	builder.WriteString(`"res": `)
+	builder.Write(res)
+	builder.WriteString(`, "vul": `)
+	builder.Write(vul)
+	builder.WriteString("}")
+	return builder.String()
 }

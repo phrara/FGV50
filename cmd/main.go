@@ -32,6 +32,7 @@ func main() {
 		}
 		// start up scanning	
 		b := scanner.RunCli(args)
+		args.HistDB.Close()
 		fmt.Println("execute successfully:", string(b))
 		return		
 	}
