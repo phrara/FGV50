@@ -121,12 +121,16 @@ function addIP(ip) {
 }
 
 function addPortInfo(ip, port, proto, banner) {
+    var cnt = 0
     for (let v of option.series[0].data[0].children) {
         if (ip === v.name) {
-            var c = {
-                "name": "port:" + port + "-" + proto + "-" + banner
-            }
-            v.children.push(c)
+            cnt++
+            if (cnt % 2 == 1) {
+                var c = {
+                    "name": "port:" + port + "-" + proto + "-" + banner
+                }
+                v.children.push(c)
+            }  
         }
     }
 }

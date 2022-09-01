@@ -20,8 +20,8 @@
       <div style="text-align:center";>
         <img src="img\logo.png" width="100px";>
       </div>
-      <h1 style="text-align:center">标题</h1>
-      <p style="text-align:center">介绍</p>
+      <h1 style="text-align:center">FGV50%</h1>
+      <p style="text-align:center">sword new new</p>
     </div>
   </div>
   <div class="container">
@@ -169,7 +169,7 @@
     console.log('datas:',d)
     maketable()
     
-    var myChart = echarts.init(document.getElementById('net_chart'), "dark", {renderer: 'canvas'});
+    var myChart = echarts.init(document.getElementById('hnet_chart'), "dark", {renderer: 'canvas'});
     myChart.hideLoading()
 
     var opt = getOption()
@@ -179,12 +179,12 @@
     //addPortInfo(ip1, 3306, "mysql", "Version_8.0.25")
     
     //setRoot(datas.data.res[0].host)
-    for (let v of datas.data.res) {
+    for (let v of d.data.res) {
         addIP(v.host)
         addPortInfo(v.host, v.port, v.protocol, v.banner)  
     }
-    for (let v of datas.data.hd) {
-        addIP(hd.host)
+    for (let v of d.data.hd) {
+        addIP("MAC:" + v.mac+" 设备:" + v.dev)
     }
 
     myChart.setOption(opt);

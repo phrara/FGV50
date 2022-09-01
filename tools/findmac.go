@@ -8,7 +8,7 @@ import (
 
 func FindMac(ip string)(string,string) {
 	fmt.Println("find the mac of "+ip)
-	cmd := exec.Command("python","./python/find_mac_dev.py",ip)
+	cmd := exec.Command("python3","./python/find_mac_dev.py",ip)
 	// 执行命令，并返回结果
 	output,err := cmd.Output()
 	if err != nil {

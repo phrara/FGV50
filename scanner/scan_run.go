@@ -156,7 +156,7 @@ func RunCli(args *flag.Args) []byte {
 
 		// start up the spider to relate the info to vuls
 		// write vulJson to ali_cve.json
-		py := exec.Command("python", pyScriptPath)
+		py := exec.Command("python3", pyScriptPath)
 		err1 := py.Run()
 		if err1 != nil {
 			fmt.Println(fmt.Errorf("%s: %s", err.ErrRunPython, err1))
@@ -219,7 +219,7 @@ func RunCli(args *flag.Args) []byte {
 
 		// start up the spider to relate the info to vuls
 		// write vulJson to ali_cve.json
-		py := exec.Command("python", pyScriptPath)
+		py := exec.Command("python3", pyScriptPath)
 		err1 := py.Run()
 		if err1 != nil {
 			fmt.Println(fmt.Errorf("%s: %s", err.ErrRunPython, err1))
