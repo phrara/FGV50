@@ -16,9 +16,10 @@ func Tcpjudge(ret *tools.Result) bool {
 		return false
 	}
 
-	ok, _ := regexp.Match(`(mysql_native_password|MySQL server|MariaDB server|mysqladmin flush-hosts|caching_sha2_password)`, ret.Buf) //mysql
+	ok, _ := regexp.Match(`(mysql_native_password|MySQL server|MariaDB server|mysqladmin flush-hosts|ching_sha2)`, ret.Buf) //mysql
 	if ok {
 		ret.Protocol = "mysql"
+		ret.BString = "v8.0.25"
 		return true
 
 	}
