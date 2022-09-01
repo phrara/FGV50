@@ -12,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -162,8 +163,61 @@ func RunCli(args *flag.Args) []byte {
 		return kTime
 
 	} else {
-		// TODO
-		panic("todo")
+		
+		r := &tools.Result{}
+		resfile := tools.Open()
+		resList := make([]tools.Result, 0, 1)
+		switch args.Url.Scheme {
+		case "http":
+			p := 0
+			if args.Url.Port() == "" {
+				p = 80
+			} else {
+				p, _ = strconv.Atoi(args.Url.Port())
+			}
+			h := args.Url.Hostname()
+			b, _ := connection.TcpProtocol(h, p, args.TTL)
+			r = tools.NewRes(h, "http", "tcp", "", "", p, args.TTL, b, false)
+			jg.TcpHTTP(r, args.Url.String())
+		case "https":
+			p := 0
+			if args.Url.Port() == "" {
+				p = 443
+			} else {
+				p, _ = strconv.Atoi(args.Url.Port())
+			}
+			h := args.Url.Hostname()
+			b, _ := connection.TlsProtocol(h, p, args.TTL)
+			r = tools.NewRes(h, "https", "tls", "", "", p, args.TTL, b, false)
+			jg.TcpHTTP(r, args.Url.String())
+		}
+		
+		
+		resList = append(resList, *r)
+
+		resJson, _ := json.Marshal(resList)
+
+		// write resJson into res.json
+		tools.Write(resJson, resfile)
+		tools.Close(resfile)
+
+		// start up the spider to relate the info to vuls
+		// write vulJson to ali_cve.json
+		py := exec.Command("python3", pyScriptPath)
+		err1 := py.Run()
+		if err1 != nil {
+			fmt.Println(fmt.Errorf("%s: %s", err.ErrRunPython, err1))
+		}
+
+		kTime := []byte(time.Now().Format("2006-01-02 15:04:05"))
+		var kTime1 []byte = []byte(string(kTime))  
+		// read vulJson
+		vj := tools.ReadVulJson()
+		if args.HistDB != nil {
+			args.HistDB.PutVulRecord(kTime, vj)
+			args.HistDB.PutResRecord(kTime1, resJson)
+		}
+		return kTime
 	}
 
 }

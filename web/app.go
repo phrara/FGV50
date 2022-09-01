@@ -22,6 +22,7 @@ func StartUpWeb(histDB *storage.HisDB) {
 func initRouter(r *gin.Engine, histDB *storage.HisDB) {
 	r.GET("/",controller.Index)
 	r.POST("/cmd", SetHistDB(histDB), controller.CommandExec)
+	r.POST("/hist", SetHistDB(histDB), controller.HistoryQuery)
 }
 
 // SetHistDB 是一个传递HistDB的中间件

@@ -70,7 +70,46 @@ func CommandExec(c *gin.Context) {
 			}
 
 		case NetworkSegment:
+			args, err2 := flag.NewArgs("", cmd.NetworkSegment , cmd.Ip, cmd.Port, 3)
+			if err2 != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"msg": err2.Error(),
+					"data": nil,
+				})
+				return
+			} else {
+				args.HistDB = hdb.(*storage.HisDB)
+				kTime := scanner.RunCli(args)
+				
+				// read results and vuls from histDB
+				vRes, vVul := args.HistDB.GetRecord(kTime)
+
+				resp := formatJson(string(kTime), vRes, vVul)
+
+				c.String(http.StatusOK, resp)
+				return
+
+			}
 		case URL:
+			args, err2 := flag.NewArgs(cmd.Url , "" , "", -1, 3)
+			if err2 != nil {
+				c.JSON(http.StatusOK, gin.H{
+					"msg": err2.Error(),
+					"data": nil,
+				})
+				return
+			} else {
+				args.HistDB = hdb.(*storage.HisDB)
+				kTime := scanner.RunCli(args)
+				// read results and vuls from histDB
+				vRes, vVul := args.HistDB.GetRecord(kTime)
+
+				resp := formatJson(string(kTime), vRes, vVul)
+
+				c.String(http.StatusOK, resp)
+				return
+			}
+
 		default:
 			c.JSON(http.StatusOK, gin.H{
 				"msg": err.ErrUnknownCmd.Error(),
@@ -78,17 +117,22 @@ func CommandExec(c *gin.Context) {
 			})
 			return
 		}
+
+
 	}
 }
 
 func formatJson(time string, res, vul []byte) string {
 	var builder = &strings.Builder{}
 	builder.WriteString("{")
+	builder.WriteString(`"msg": "ok", `)
+	builder.WriteString(`"data": {`)
 	builder.WriteString(`"time": "` + time + `", `)
 	builder.WriteString(`"res": `)
 	builder.Write(res)
 	builder.WriteString(`, "vul": `)
 	builder.Write(vul)
+	builder.WriteString("}")
 	builder.WriteString("}")
 	return builder.String()
 }

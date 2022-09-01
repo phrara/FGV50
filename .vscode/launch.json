@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${file}",
-            "args": ["-i", "127.0.0.1"]
+            "args": ["-u", "https://www.bilibili.com/"]
         }
     ]
 }

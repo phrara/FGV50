@@ -77,7 +77,7 @@ class aliyun:
         print("读取服务")
         output = []
         keywords = []
-        with open("./json/res.json", mode="r") as f:
+        with open("./json/res.json", mode="r", encoding='utf-8') as f:
             res = json.load(f)
             for item in res:
                 keywords.append(item["protocol"])

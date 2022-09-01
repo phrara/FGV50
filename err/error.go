@@ -12,4 +12,31 @@ var (
 	ErrUnknownCmd = errors.New("unknown command")
 	ErrLevelDBInit = errors.New("initiate leveldb failed")
 	ErrRunPython = errors.New("run python failed")
+	ErrIllFormedTime = errors.New("ill formed time")
 )
+
+func ErrMatch(e error) {
+	switch e {
+		case ErrArgsConflict:
+			ErrHandle()
+		case ErrArgsLack:
+			ErrHandle()
+		case ErrIllFormedIP:
+			ErrHandle()
+		case ErrIllFormedNS:
+			ErrHandle()
+		case ErrLevelDBInit:
+			ErrHandle()
+		case ErrUnknownArgs:
+			ErrHandle()
+		case ErrPortOutRange:
+			ErrHandle()
+		default:
+	}
+}
+
+
+
+func ErrHandle()  {
+
+}
